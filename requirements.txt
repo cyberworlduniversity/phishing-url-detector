@@ -1,0 +1,11 @@
+# Phishing URL Detector - Requirements
+# No external dependencies required!
+# Uses Python standard library only:
+#   - re (regex)
+#   - sys
+#   - json
+#   - urllib.parse
+#   - datetime
+#   - unittest
+
+# Python >= 3.7 required
