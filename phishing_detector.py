@@ -7,6 +7,7 @@ Description: Analyzes URLs for suspicious phishing patterns
 """
 
 import re
+import ipaddress
 import sys
 import json
 import urllib.parse
@@ -77,10 +78,12 @@ class PhishingDetector:
 
     def check_ip_address(self):
         hostname = self.parsed.hostname or ""
-        ip_pattern = re.compile(r"^\d{1,3}(\.\d{1,3}){3}$")
-        if ip_pattern.match(hostname):
-            self.findings.append("🚨  IP address used as hostname (common in phishing)")
-            self.score += 30
+        try:
+            ipaddress.ip_address(hostname)
+        except ValueError:
+            return
+        self.findings.append("🚨  IP address used as hostname (common in phishing)")
+        self.score += 30
 
     def check_domain_length(self):
         hostname = self.parsed.hostname or ""
