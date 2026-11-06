@@ -43,6 +43,16 @@ class TestPhishingDetector(unittest.TestCase):
         result = self.get_result("https://amazon-account-verify.xyz")
         self.assertGreaterEqual(result["risk_score"], 50)
 
+    def test_brand_lookalike_domain_is_not_trusted(self):
+        result = self.get_result("https://fakepaypal.com")
+        self.assertGreaterEqual(result["risk_score"], 35)
+        self.assertTrue(any("brand spoofing" in item.lower() for item in result["findings"]))
+
+    def test_real_brand_domain_and_subdomain_are_not_flagged_as_spoofing(self):
+        for url in ("https://paypal.com", "https://www.paypal.com"):
+            result = self.get_result(url)
+            self.assertFalse(any("brand spoofing" in item.lower() for item in result["findings"]))
+
     # ── Suspicious TLD ─────────────────────────────────────────────
     def test_suspicious_tld_tk(self):
         result = self.get_result("http://freeprize.tk")
