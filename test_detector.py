@@ -53,6 +53,11 @@ class TestPhishingDetector(unittest.TestCase):
             result = self.get_result(url)
             self.assertFalse(any("brand spoofing" in item.lower() for item in result["findings"]))
 
+    def test_ipv6_address_detection(self):
+        result = self.get_result("http://[2001:db8::1]/login")
+        self.assertGreaterEqual(result["risk_score"], 30)
+        self.assertTrue(any("IP address" in item for item in result["findings"]))
+
     # ── Suspicious TLD ─────────────────────────────────────────────
     def test_suspicious_tld_tk(self):
         result = self.get_result("http://freeprize.tk")
