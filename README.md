@@ -1,5 +1,15 @@
 # 🛡️ Phishing URL Detector
 
+
+## Get this repository
+
+Clone the current project (this repository's canonical GitHub URL), then follow the installation and usage steps below.
+
+```bash
+git clone https://github.com/cyberworlduniversity/phishing-url-detector.git
+cd phishing-url-detector
+```
+
 > **Tool #12** in the Security Toolkit — by [@hemanathan115](https://github.com/hemanathan115)
 
 A Python-based command-line tool that analyzes URLs and detects suspicious phishing patterns using rule-based heuristics. No external APIs or dependencies required — runs entirely offline.
