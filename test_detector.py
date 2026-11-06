@@ -95,6 +95,18 @@ class TestPhishingDetector(unittest.TestCase):
         self.assertIn("findings", result)
         self.assertIn("analyzed_at", result)
 
+    def test_rejects_url_without_hostname(self):
+        result = self.get_result("https://")
+        self.assertEqual(result, {"error": "Invalid URL"})
+
+    def test_rejects_malformed_port(self):
+        result = self.get_result("https://example.com:bad")
+        self.assertEqual(result, {"error": "Invalid URL"})
+
+    def test_rejects_whitespace_in_url(self):
+        result = self.get_result("https://example .com")
+        self.assertEqual(result, {"error": "Invalid URL"})
+
 
 if __name__ == "__main__":
     print("🧪 Running Phishing URL Detector Tests...\n")
