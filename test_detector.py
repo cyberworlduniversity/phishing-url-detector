@@ -46,12 +46,12 @@ class TestPhishingDetector(unittest.TestCase):
     def test_brand_lookalike_domain_is_not_trusted(self):
         result = self.get_result("https://fakepaypal.com")
         self.assertGreaterEqual(result["risk_score"], 35)
-        self.assertTrue(any("brand spoofing" in item.lower() for item in result["findings"]))
+        self.assertTrue(any("possible brand spoofing" in item.lower() for item in result["findings"]))
 
     def test_real_brand_domain_and_subdomain_are_not_flagged_as_spoofing(self):
         for url in ("https://paypal.com", "https://www.paypal.com"):
             result = self.get_result(url)
-            self.assertFalse(any("brand spoofing" in item.lower() for item in result["findings"]))
+            self.assertFalse(any("possible brand spoofing" in item.lower() for item in result["findings"]))
 
     def test_ipv6_address_detection(self):
         result = self.get_result("http://[2001:db8::1]/login")
@@ -110,6 +110,14 @@ class TestPhishingDetector(unittest.TestCase):
 
     def test_rejects_whitespace_in_url(self):
         result = self.get_result("https://example .com")
+        self.assertEqual(result, {"error": "Invalid URL"})
+
+    def test_rejects_oversized_url(self):
+        result = self.get_result("https://example.com/" + "a" * 5000)
+        self.assertEqual(result, {"error": "Invalid URL"})
+
+    def test_rejects_control_characters(self):
+        result = self.get_result("https://example.com/\nmalicious")
         self.assertEqual(result, {"error": "Invalid URL"})
 
 
