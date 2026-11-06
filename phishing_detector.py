@@ -48,11 +48,21 @@ class PhishingDetector:
 
     def parse_url(self) -> bool:
         try:
+            if not self.url or any(ch.isspace() for ch in self.url):
+                raise ValueError("URL is empty or contains whitespace")
             if not self.url.startswith(("http://", "https://")):
                 self.url = "http://" + self.url
             self.parsed = urllib.parse.urlparse(self.url)
+            # urlparse accepts malformed inputs such as "https://" without a host.
+            # Reject missing hosts and invalid port/bracket syntax before analysis.
+            hostname = self.parsed.hostname
+            _ = self.parsed.port
+            if not hostname:
+                raise ValueError("URL must include a valid hostname")
+            if self.parsed.scheme not in ("http", "https"):
+                raise ValueError("Only HTTP and HTTPS URLs are supported")
             return True
-        except Exception as e:
+        except (ValueError, TypeError) as e:
             self.findings.append(f"[ERROR] Could not parse URL: {e}")
             return False
 
