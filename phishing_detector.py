@@ -106,14 +106,19 @@ class PhishingDetector:
             self.score += min(len(found) * 8, 25)
 
     def check_brand_spoofing(self):
-        hostname = (self.parsed.hostname or "").lower()
+        hostname = (self.parsed.hostname or "").lower().rstrip(".")
+        # First allow exact trusted domains and their DNS subdomains.
+        if any(hostname == brand or hostname.endswith("." + brand)
+               for brand in TRUSTED_DOMAINS):
+            self.findings.append("✅  No obvious brand spoofing detected")
+            return
+
         for brand in TRUSTED_DOMAINS:
             brand_name = brand.split(".")[0]
-            # A brand domain is trusted only at a DNS label boundary.
-            # For example, fakepaypal.com must not pass as paypal.com.
-            is_exact_or_subdomain = hostname == brand or hostname.endswith("." + brand)
-            if brand_name in hostname and not is_exact_or_subdomain:
-                self.findings.append(f"🚨  Possible brand spoofing: '{brand_name}' in domain but not '{brand}'")
+            if brand_name in hostname:
+                self.findings.append(
+                    f"🚨  Possible brand spoofing: '{brand_name}' in domain but not '{brand}'"
+                )
                 self.score += 35
                 return
         self.findings.append("✅  No obvious brand spoofing detected")
