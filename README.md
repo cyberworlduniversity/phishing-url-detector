@@ -145,3 +145,48 @@ MIT License — free to use, modify, and distribute.
 GitHub: [https://github.com/hemanathan115](https://github.com/hemanathan115)
 
 > ⚠️ This tool is for educational and defensive security purposes only.
+
+
+## Repository Quick Start
+
+Clone the canonical repository:
+
+```bash
+git clone https://github.com/cyberworlduniversity/phishing-url-detector.git
+cd phishing-url-detector
+```
+
+### Requirements and installation
+
+- Python 3.10+ is recommended.
+- No third-party packages are required by the documented project entry point.
+
+### Run
+
+```bash
+python phishing_detector.py
+```
+
+For scripts that expose command-line options, use `python phishing_detector.py --help` to inspect the options implemented in this version. Begin with sample or non-sensitive input.
+
+### Validate source syntax
+
+```bash
+python -m compileall -q .
+```
+
+Treat heuristic scores as indicators, not proof. Do not open suspicious links just to test them.
+
+### Program flow
+
+```mermaid
+flowchart TD
+    A[Start] --> B[Load input and settings]
+    B --> C{Input valid?}
+    C -- No --> D[Show validation error]
+    C -- Yes --> E[Run phishing url detector checks]
+    E --> F[Evaluate results]
+    F --> G[Display or save report]
+    G --> H[Exit]
+    D --> H
+```
