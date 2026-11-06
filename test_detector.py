@@ -112,6 +112,14 @@ class TestPhishingDetector(unittest.TestCase):
         result = self.get_result("https://example .com")
         self.assertEqual(result, {"error": "Invalid URL"})
 
+    def test_rejects_oversized_url(self):
+        result = self.get_result("https://example.com/" + "a" * 5000)
+        self.assertEqual(result, {"error": "Invalid URL"})
+
+    def test_rejects_control_characters(self):
+        result = self.get_result("https://example.com/\\nmalicious")
+        self.assertEqual(result, {"error": "Invalid URL"})
+
 
 if __name__ == "__main__":
     print("🧪 Running Phishing URL Detector Tests...\n")
